@@ -10,6 +10,8 @@ from panda3d.core import Lens, OrthographicLens
 import sys
 
 
+
+
 def color(r,g,b):
     return((r/255,g/255,b/255))
 
@@ -153,15 +155,45 @@ class MouseTask(ShowBase):
         self.setupLights()
         
         self.accept("mouse1", self.mousePressedLeft)
-        self.accept("mouse3", self.mousePressedRight)
+        self.accept("Right", self.setCamera, ["Right"])
         self.taskMgr.add(self.update, "update")
         
         self.pieceSelected = None
         self.piece = None
         self.current_z = 0.01
         
+        self.inputDevice = "mouse"
+        
+    def setCamera(self, direction):
+        print("kjdsa")
+        if direction == "Right":
+            if self.camera.getPos() == (8, -5, 10):
+                self.camera.setPos(0.5,-5,10)
+            elif self.camera.getPos() == (0.5, -5, 10) :
+                self.camera.setPos(-8,-5,10)
+            elif self.camera.getPos() == (-8, -5, 10):
+                self.camera.setPos(0.5, -5, 10)
+        
+    def changeCurrent_Z(self):
+        if self.mouseWatcherNode.hasMouse():
+            # get the mouse position
+            mpos = self.mouseWatcherNode.getMouse()
+
+            # Set the position of the ray based on the mouse position
+            self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+            
+            pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+            # Same thing with the direction of the ray
+            vectorOfRay = render.getRelativeVector(
+                camera, self.pickerRay.getDirection())
+            point = PointAtZ(0, pointOfRay, vectorOfRay)
+            if point.getX() > 5 or point.getX() < -3:
+                self.current_z = 1.01
+            else:
+                self.current_z = 0.01
         
     def mousePressedLeft(self):
+        self.changeCurrent_Z()
         if self.pieceSelected == None:
             if self.mouseWatcherNode.hasMouse():
                 # get the mouse position
@@ -195,34 +227,31 @@ class MouseTask(ShowBase):
                 # Same thing with the direction of the ray
                 vectorOfRay = render.getRelativeVector(
                     camera, self.pickerRay.getDirection())
-                point = PointAtZ(0, pointOfRay, vectorOfRay)
+                point = PointAtZ(self.current_z, pointOfRay, vectorOfRay)
                 if point.getX() > 5 or point.getX() < -3:
                     point.setZ(1)
-                    self.current_z = 1
-                else:
-                    point.setZ(0)
-                    self.current_z = 0
+                    
+                
                 for index in range(192):
                     posOfSq = self.squares[index].getPos()
                     if checkPos(point, posOfSq):
                         self.piece.setPos(posOfSq)
                         self.piece = None
                         self.pieceSelected = None
-                        
         
-    def mousePressedRight(self):
-        if self.mouseWatcherNode.hasMouse():   
-            mpos = self.mouseWatcherNode.getMouse()
-            print(mpos)
-            if mpos.getX() >= 0.73 and self.camera.getPos() == (0.5, -5, 10):
-                self.camera.setPos(8,-5,10)
-            elif self.camera.getPos() == (8, -5, 10) and mpos.getX() < -0.73:
-                self.camera.setPos(0.5,-5,10)
-            elif self.camera.getPos() == (0.5, -5, 10) and mpos.getX() < -0.73:
-                self.camera.setPos(-8,-5,10)
-            if mpos.getX() >= 0.73 and self.camera.getPos() == (-8, -5, 10):
-                self.camera.setPos(0.5, -5, 10)
-            
+#     def mousePressedRight(self):
+#         if self.mouseWatcherNode.hasMouse():   
+#             mpos = self.mouseWatcherNode.getMouse()
+#             print(mpos)
+#             if mpos.getX() >= 0.73 and self.camera.getPos() == (0.5, -5, 10):
+#                 self.camera.setPos(8,-5,10)
+#             elif self.camera.getPos() == (8, -5, 10) and mpos.getX() < -0.73:
+#                 self.camera.setPos(0.5,-5,10)
+#             elif self.camera.getPos() == (0.5, -5, 10) and mpos.getX() < -0.73:
+#                 self.camera.setPos(-8,-5,10)
+#             if mpos.getX() >= 0.73 and self.camera.getPos() == (-8, -5, 10):
+#                 self.camera.setPos(0.5, -5, 10)
+#             
         
     def setupLights(self):  
         ambientLight = AmbientLight("ambientLight")
@@ -234,43 +263,42 @@ class MouseTask(ShowBase):
         render.setLight(render.attachNewNode(ambientLight))
 
     def update(self, task):
-        if self.piece != None:
-            if self.mouseWatcherNode.hasMouse():
-                
-                mpos = self.mouseWatcherNode.getMouse()
-                
-#                 print(mpos)
+        if True:
+            if self.piece != None:
+                if self.mouseWatcherNode.hasMouse():
+                    
+                    mpos = self.mouseWatcherNode.getMouse()
+                    
+    #                 print(mpos)
 
 
-                self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
-                
-                pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
-                vectorOfRay = render.getRelativeVector(
-                    camera, self.pickerRay.getDirection())
-                
-                point = PointAtZ(self.current_z, pointOfRay, vectorOfRay)
-                print(point)
-                
-                # The shift
-                if int(point.getX()) > 4 or int(point.getX()) < -3:
-                    point.setZ(1)
-#                     mpos.setY(mpos.getY() + 0.1)#
-                    self.current_z = 1
-#                     self.win.movePointer(0, mpos.getX() , mpos.getY()+0.1)
-                elif point.getX() <= 4 and point.getX() >= -3:
-                    point.setZ(0)
-                    self.current_z = 0.01
-                
-                self.piece.setPos(point)
-
-                
-            
+                    self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+                    
+                    pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+                    vectorOfRay = render.getRelativeVector(
+                        camera, self.pickerRay.getDirection())
+                    
+                    point = PointAtZ(self.current_z, pointOfRay, vectorOfRay)
+                    print(point)
+                    
+                    # The shift
+                    if int(point.getX()) > 4 or int(point.getX()) < -3:
+                        point.setZ(1)
+    #                     mpos.setY(mpos.getY() + 0.1)#
+                        self.current_z = 1
+    #                     self.win.movePointer(0, mpos.getX() , mpos.getY()+0.1)
+                    elif point.getX() <= 4 and point.getX() >= -3:
+                        point.setZ(0)
+                        self.current_z = 0.01
+                    
+                    self.piece.setPos(point)      
         return Task.cont
     
 
         
 game = MouseTask()
 game.run()
+
 
 
 

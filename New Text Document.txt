@@ -1,0 +1,52 @@
+Before opening the the python files please follow the following steps:
+
+1. Open a new python file on thonny.
+2. Go to the tools section at the top left corner.
+3. Go to the manage packages section
+4. Type "panda3d" in the search bar
+5. Install it.
+
+After completing the following the above mentioned steps, we can now open 
+the combine02.py.
+
+For keyboard:
+In this programme one can move the pieces everywhere without "restriction"
+using keyboard keys. The blue tile in the game is the currently selected 
+square. We can move it along all 3 x, y, and z axis and using that we can 
+select a chess piece and move with it.
+
+Instructions:
+
+1. "arrow-up" : moving along +y axis
+2. "arrow-down": moving along -y axis
+3. "arrow-right": moving along +x axis
+4. "arrow-left": moving along -x axis
+5. "enter": selecting (if there is a piece in the current square) or
+	    placing a piece.
+6. "u": moving along  +z axis (Not required; Only for demonstration)
+7. "d": moving along  -z axis (Not required; Only for demonstration)
+8. "m": change the input device
+
+
+For mouse:
+In this programme one can move the pieces within the boundaries of the board using mouse. The first right click (ON THE SQUARE) will select 
+the piece on that square (if any). The second right click will place the
+selected piece in any location but within the boundaries of the board. 
+
+Instructions:
+
+1. "Right click" (FIRST): Selects a piece
+2. "Right click" (SECOND): Places the piece
+3. "Left click" (towards extreme right): Changes the camera vision to the chess board (if any) at right.
+4. "Left click" (towards extreme left): Changes the camera vision to the chess board (if any) at left
+
+
+******** The functions that are taken from other sources are labeled as "Not my function" in the respective comment section*********
+******** For using the mouse view system please comment out the 'self.disableMouse()' line ********
+******** Commenting out 'self.disableMouse()' line can cause the camera to see from unexpected viewpoint. So, please follow the mouse uses instruction******
+
+Mouse Usage (Only after commenting out 'self.disableMouse()' line):
+
+1. Use the left click to move the camera along x axis.
+2. Use the right click to move the camera along y axis (closer to the board).
+3. Use the scroll button to rotate the board.

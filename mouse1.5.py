@@ -6,7 +6,6 @@ from panda3d.core import LPoint3, LVector3, BitMask32
 from direct.gui.OnscreenText import OnscreenText
 from direct.showbase.DirectObject import DirectObject
 from direct.task.Task import Task
-from panda3d.core import Lens, OrthographicLens
 import sys
 
 
@@ -161,7 +160,7 @@ class MouseTask(ShowBase):
         self.current_z = 0.01
         
         
-    def mousePressedLeft(self):
+    def mousePressedLeft0(self):
         if self.pieceSelected == None:
             if self.mouseWatcherNode.hasMouse():
                 # get the mouse position
@@ -208,6 +207,53 @@ class MouseTask(ShowBase):
                         self.piece.setPos(posOfSq)
                         self.piece = None
                         self.pieceSelected = None
+                        
+        
+        
+    def mousePressedLeft(self):
+        if self.pieceSelected == None:
+            if self.mouseWatcherNode.hasMouse():
+                # get the mouse position
+                mpos = self.mouseWatcherNode.getMouse()
+
+                # Set the position of the ray based on the mouse position
+                self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+                
+                pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+                # Same thing with the direction of the ray
+                vectorOfRay = render.getRelativeVector(
+                    camera, self.pickerRay.getDirection())
+                point = PointAtZ(self.current_z, pointOfRay, vectorOfRay)
+                if point.getX() > 5 or point.getX() < -3:
+                    point.setZ(1)
+                print(point)
+
+#                     
+#         elif self.pieceSelected != None:
+#             if self.mouseWatcherNode.hasMouse():
+#                 # get the mouse position
+#                 mpos = self.mouseWatcherNode.getMouse()
+# 
+#                 # Set the position of the ray based on the mouse position
+#                 self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+#                 
+#                 pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+#                 # Same thing with the direction of the ray
+#                 vectorOfRay = render.getRelativeVector(
+#                     camera, self.pickerRay.getDirection())
+#                 point = PointAtZ(0, pointOfRay, vectorOfRay)
+#                 if point.getX() > 5 or point.getX() < -3:
+#                     point.setZ(1)
+#                     self.current_z = 1
+#                 else:
+#                     point.setZ(0)
+#                     self.current_z = 0
+#                 for index in range(192):
+#                     posOfSq = self.squares[index].getPos()
+#                     if checkPos(point, posOfSq):
+#                         self.piece.setPos(posOfSq)
+#                         self.piece = None
+#                         self.pieceSelected = None
                         
         
     def mousePressedRight(self):
@@ -271,6 +317,7 @@ class MouseTask(ShowBase):
         
 game = MouseTask()
 game.run()
+
 
 
 
