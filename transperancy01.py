@@ -30,7 +30,7 @@ class KeyBoardTask(ShowBase):
         self.squares2.setPos(0,10,1)
         self.squares2.setColor(1,0,0)
         self.squares2.setTransparency(TransparencyAttrib.MAlpha)
-        self.squares2.setAlphaScale(0.4)
+        self.squares2.setAlphaScale()
 
 
 
