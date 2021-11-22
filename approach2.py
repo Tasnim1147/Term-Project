@@ -56,7 +56,7 @@ class MilleniumChess(ShowBase):
     # Forms Board place the pieces
     # And draws the selected (floating) square
     def formBoardAndPieces(self):
-        for z in range (-1,2):
+        for z in range (1,-2,-1):
             count= 1
             for x in range(-3,5):
                 # going to next row
@@ -66,57 +66,52 @@ class MilleniumChess(ShowBase):
                     if count % 2 == 0:
                         square = loader.loadModel("models/square.egg")
                         self.squares[(cord)] = square
+                        self.squares[(cord[0], cord[1], -1 * cord[2])] = square
                         self.squares[(cord)].reparentTo(render)
                         self.squares[(cord)].setPos(cord)
-#                         self.squares[(cord[0], cord[1], -1 * cord[2])] = square
                         self.squares[(cord)].setColor(0,0,0)
                         self.recordColor[(cord)] = (0,0,0)
-#                         self.recordColor[(cord[0], cord[1], -1 * cord[2])] = (0,0,0)
+                        self.recordColor[(cord[0], cord[1], -1 * cord[2])] = (0,0,0)
                         self.pieces[(cord)] = None
-                        self.sqCord[square] = cord
-    #                     count+= 1
+                        self.pieces[(cord[0], cord[1], -1 * cord[2])] = None
+                        self.sCord[square] = cord
                     else:
                         square = loader.loadModel("models/square.egg")
                         self.squares[(cord)] = square
-#                         self.squares[(cord[0], cord[1], -1 * cord[2])] = square
+                        self.squares[(cord[0], cord[1], -1 * cord[2])] = square
                         self.squares[(cord)].reparentTo(render)
                         self.squares[(cord)].setPos(cord)
                         self.squares[(cord)].setColor(1,1,1)
                         self.recordColor[(cord)] = (1,1,1)
-#                         self.recordColor[(cord[0], cord[1], -1 * cord[2])] = (1,1,1)
+                        self.recordColor[(cord[0], cord[1], -1 * cord[2])] = (1,1,1)
                         self.pieces[(cord)] = None
-                        self.sqCord[square] = cord
+                        self.pieces[(cord[0], cord[1], -1 * cord[2])] = None
+                        self.sCord[square] = cord
                     if y == 12 and z != 0  and z != -1:
                         piece = loader.loadModel("models/pawn.egg")
-                        self.pieceCord[piece] = cord
+                        self.pCord[piece] = cord
                         self.pieces[(cord)] = piece
                         self.pieces[(cord)].reparentTo(render)
-                        self.pieces[(cord)].setPos(x ,y+(8 * z),(z))
-                        self.pieces[(cord)].setColor(1,1,1)
-                        
-#                         #self.records["lightPawn"] = self.pieces[(cord)]
-                        
+                        self.pieces[(cord)].setPos(x ,y + (8 * z), z)
+                        self.pieces[(cord)].setColor(1,1,1) 
                     elif y == 7 and z != 0 and z != 1:
                         piece = loader.loadModel("models/pawn.egg")
-                        self.pieceCord[piece] = cord
+                        self.pCord[piece] = cord
                         self.pieces[(cord)] = piece
                         self.pieces[(cord)].reparentTo(render)
                         self.pieces[(cord)].setPos(cord)
-                        self.pieces[(cord)].setColor(color(150, 75, 0)[0],color(150, 75, 0)[1],color(150, 75, 0)[2])
-#                         #self.records["darkPawn"] = self.pieces[(cord)]
-                        
+                        self.pieces[(cord)].setColor(color(150, 75, 0)[0],color(150, 75, 0)[1],color(150, 75, 0)[2]) 
                     elif (x, y) in [(-3, 13), (4,13), (-3,6), (4,6)] and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/rook.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
-                            self.pieces[(cord)].setColor(1,1,1)
-#                             #self.records["lightRook"] = self.pieces[(cord)]
+                            self.pieces[(cord)].setColor(1,1,1) 
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/rook.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -125,7 +120,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(-2, 13), (3,13), (-2,6), (3,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/knight.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -133,7 +128,7 @@ class MilleniumChess(ShowBase):
                             #self.records["lightKnight"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/knight.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -142,7 +137,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(-1, 13), (2,13), (-1,6), (2,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/bishop.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -150,7 +145,7 @@ class MilleniumChess(ShowBase):
                             #self.records["lightBishop"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/bishop.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -159,24 +154,25 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(0, 13), (0,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/king.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
-                            self.pieces[(cord)].setColor(1,1,1)
+                            self.pieces[(cord)].setColor(1,1,1) 
                             self.records["lightKing"] = piece
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/king.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
                             self.pieces[(cord)].setColor(color(150, 75, 0)[0],color(150, 75, 0)[1],color(150, 75, 0)[2])
                             self.records["darkKing"] = piece
+                            
                     elif (x, y) in [(1, 13), (1,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/queen.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -184,15 +180,13 @@ class MilleniumChess(ShowBase):
                             #self.records["lightQueen"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/queen.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
-                            self.pieces[(cord)].setColor(color(150, 75, 0)[0],color(150, 75, 0)[1],color(150, 75, 0)[2])
-                            #self.records["darkQueen"] = self.pieces[(cord)]
+                            self.pieces[(cord)].setColor(color(150, 75, 0)[0],color(150, 75, 0)[1],color(150, 75, 0)[2]) 
                     count+= 1
-                count+= 1
-#         print(self.pieces)
+                count+= 1 
                 
     def check(self, d):
         L = []
@@ -220,10 +214,7 @@ class MilleniumChess(ShowBase):
         
     # Checks whether a square is free or not 
     # If True then Free else not free
-    def checkFreeSq(self, square):
-#         ## print(square)
-#         #
-  
+    def checkFreeSq(self, square): 
         if square not in self.pieces:
             return True
         elif square in self.pieces:
@@ -233,107 +224,137 @@ class MilleniumChess(ShowBase):
     # CALLED every frame
     # Changes the position based on blue sq
     def update(self, task):
+        print(self.square.getPos())
         if self.turn == 0:
             self.camera.setPos(0.5,-20,25)
             self.camera.setHpr(0,-42.5,0)
-        else:
-# #             self.camera.setPos(0.5,43,38)
-# #             self.camera.setHpr(180,-50,0)
+            self.dx = 1
+        else: 
             self.camera.setPos(0.5,39,25)
             self.camera.setHpr(180,-42.5 ,0)
-        # gets the current position of the blue sq
-        # gets the current position of the blue sq
+            self.dx = -1
         posOfSq = self.square.getPos()
-        
         # Now start check which button is pressed and change position accordingly
         if keyMap["left"]:
-            posOfSq.x -= self.dx
-            
-            # resetting the values
-            keyMap["left"] = False
-            
-#             if posOfSq.x < -3: # restart blue sq from right
-#                 posOfSq.setX(4)
-
+            posOfSq.x -= self.dx 
+            if posOfSq.x < -3: # restart blue sq from right
+                posOfSq.setX(4)
+            elif posOfSq.x > 4: # restart blue sq from left
+                posOfSq.setX(-3) 
+            keyMap["left"] = False  
         elif keyMap["right"]:
-            posOfSq.x += self.dx
-            
-            # resetting the values
-            keyMap["right"] = False
-            
-#             if posOfSq.x > 4: # restart blue sq from left
-#                 posOfSq.setX(-3)
-                
-        elif keyMap["up"]:
-            
+            posOfSq.x += self.dx 
+            if posOfSq.x > 4: # restart blue sq from left
+                posOfSq.setX(-3) 
+            elif posOfSq.x < -3: # restart blue sq from right
+                posOfSq.setX(4)
+            keyMap["right"] = False  
+        elif keyMap["up"]: 
             posOfSq.y += self.dx
-            keyMap["up"] = False
-            
-#             if 13 >= posOfSq.y > 5  : # Going to 2nd level in from 1st level
-#                 posOfSq.setZ(0.01)
-#                 
-#             elif 21 >= posOfSq.y > 13 : # Going to 3 level in from 2nd level
-#                 posOfSq.setZ(1.01)
-#                 
-#             elif 5 >= posOfSq.y > -2: # Staying in the first level 
-#                 posOfSq.setZ(-0.99)
-#                 
-#             elif posOfSq.y > 21: # Going back to 1st chess board from 3rd board
-#                 posOfSq.setY(-2)
-#                 posOfSq.setZ(-0.99)
-                
+            if self.turn == 0:
+                if 13 >= posOfSq.y > 5  : # Going to 2nd level in from 1st level
+                    posOfSq.setZ(0.01)
+                    
+                elif 21 >= posOfSq.y > 13 : # Going to 3 level in from 2nd level
+                    posOfSq.setZ(1.01)
+                    
+                elif 5 >= posOfSq.y > -2: # Staying in the first level 
+                    posOfSq.setZ(-0.99)
+                    
+                elif posOfSq.y > 21: # Going back to 1st chess board from 3rd board
+                    posOfSq.setY(-2)
+                    posOfSq.setZ(-0.99)
+            else:
+                if 13 >= posOfSq.y > 5 :
+                    posOfSq.setZ(0.01)
+                    
+                elif 21 >= posOfSq.y > 13  :
+                    posOfSq.setZ(-0.99)
+                    
+                elif 5 >= posOfSq.y > -2:
+                    posOfSq.setZ(1.01)
+                    
+                elif posOfSq.y < -2:
+                    posOfSq.setY(21)
+                    posOfSq.setZ(-0.99)
+            keyMap["up"] = False 
         elif keyMap["down"]:
             posOfSq.y -= self.dx
-            keyMap["down"] = False
-            
-#             if 13 >= posOfSq.y > 5 :
-#                 posOfSq.setZ(0.01)
-#                 
-#             elif 21 >= posOfSq.y > 13  :
-#                 posOfSq.setZ(1.01)
-#                 
-#             elif 5 >= posOfSq.y > -2:
-#                 posOfSq.setZ(-0.99)
-#                 
-#             elif posOfSq.y < -2:
-#                 posOfSq.setY(21)
-#                 posOfSq.setZ(1.01)
-                
+            if self.turn == 1:
+                if 13 >= posOfSq.y > 5  : # Going to 2nd level in from 1st level
+                    posOfSq.setZ(0.01)
+                    
+                elif 21 >= posOfSq.y > 13 : # Going to 3 level in from 2nd level
+                    posOfSq.setZ(-0.99)
+                    
+                elif 5 >= posOfSq.y > -2: # Staying in the first level 
+                    posOfSq.setZ(1.01)
+                    
+                elif posOfSq.y > 21: # Going back to 1st chess board from 3rd board
+                    posOfSq.setY(-2)
+                    posOfSq.setZ(-0.99)
+            else:
+                if 13 >= posOfSq.y > 5 :
+                    posOfSq.setZ(0.01)
+                    
+                elif 21 >= posOfSq.y > 13  :
+                    posOfSq.setZ(1.01)
+                    
+                elif 5 >= posOfSq.y > -2:
+                    posOfSq.setZ(-0.99)
+                    
+                elif posOfSq.y < -2:
+                    posOfSq.setY(21)
+                    posOfSq.setZ(1.01)
+            keyMap["down"] = False 
         elif keyMap["u"]:
-            posOfSq.z += self.dx
-#             if 0 < posOfSq.z < 1 and -2 <= posOfSq.y <= 5:
-#                 posOfSq.y += 8
-#             elif 1 < posOfSq.z < 2 and 6 <= posOfSq.y <= 13:
-#                 posOfSq.y += 8
-#             elif posOfSq.z >= 2 and  posOfSq.y > 13:
-#                 posOfSq.y -= 16
-#                 posOfSq.z = -0.99
-            keyMap["u"] = False
-            
+            posOfSq.z += abs(self.dx) 
+            if self.turn == 0:
+                if 0 < posOfSq.z < 1 and -2 <= posOfSq.y <= 5:
+                    posOfSq.y += 8
+                elif 1 < posOfSq.z < 2 and 6 <= posOfSq.y <= 13:
+                    posOfSq.y += 8
+                elif posOfSq.z > 2 and 14 <= posOfSq.y <=21:
+                    posOfSq.y -= 16
+                    posOfSq.z = -0.99
+            elif self.turn == 1:
+                if 0 < posOfSq.z < 1 and 14 <= posOfSq.y <= 21:
+                    posOfSq.y -= 8
+                elif 1 < posOfSq.z < 2 and 6 <= posOfSq.y <= 13:
+                    posOfSq.y -= 8
+                elif posOfSq.z > 2 and -2 <= posOfSq.y <= 5:
+                    posOfSq.y += 16
+                    posOfSq.z = -0.99
+
+            keyMap["u"] = False 
         elif keyMap["d"]:
-            posOfSq.z -= self.dx
-#             if 0 < posOfSq.z < 1 and posOfSq.y > 13:
-#                 posOfSq.y -= 8
-#             elif -1 < posOfSq.z < 0 and posOfSq.y >= 6:
-#                 posOfSq.y -= 8
-#             elif posOfSq.z < -1 and  -2 <= posOfSq.y < 6:
-#                 posOfSq.y += 16
-#                 posOfSq.z = 1.01
-            keyMap["d"] = False
-            
-        if keyMap["enter"]:
+            posOfSq.z -= abs(self.dx) 
+            if self.turn == 0:
+                if 0 < posOfSq.z < 1 and 14 <= posOfSq.y <= 21:
+                    posOfSq.y -= 8
+                elif -1 < posOfSq.z < 0 and 6 <= posOfSq.y <= 13:
+                    posOfSq.y -= 8
+                elif posOfSq.z < -1 and -2 <= posOfSq.y <= 5:
+                    posOfSq.y += 16
+                    posOfSq.z = 1.01
+            elif self.turn == 1:
+                if 0 < posOfSq.z < 1 and -2 <= posOfSq.y <= 5:
+                    posOfSq.y += 8
+                elif -1 < posOfSq.z < 0 and 6 <= posOfSq.y <= 13:
+                    posOfSq.y += 8
+                elif posOfSq.z < -1 and 14 <= posOfSq.y <= 21:
+                    posOfSq.y -= 16
+                    posOfSq.z = 1.01
+            keyMap["d"] = False 
+        if keyMap["enter"]:  
             self.enterPressed(posOfSq)
         elif keyMap["enter"] == False and self.select:
-            self.pieces[self.pieceKey].setPos(roundTuple(posOfSq))
-
-            
-        self.square.setPos(posOfSq)
-        
+            self.pieces[self.pieceKey].setPos(roundTuple(posOfSq)) 
+        self.square.setPos(posOfSq) 
         return task.cont
     
     def enterPressed(self, posOfSq):
-        cord = roundTuple(posOfSq)
-        # Check whther the blue sq is empty (self.select == False)
+        cord = roundTuple(posOfSq) 
         if self.select == False:
             # Check whther the non blue sq is empty or not
             if self.checkFreeSq(cord):
@@ -354,28 +375,27 @@ class MilleniumChess(ShowBase):
                     self.showMoves() # potential check point for pinned
                 else:
                     keyMap["enter"] = False # Does not do any thing if an empty sq is selected
-                    return
-                
-        elif self.select: # When we have the piece in our hand and pressed enter
-#             if cord not in self.pieces:
-            if roundTuple(self.squares[cord].getColor()) == (0, 1, 0):
+                    self.piece = None
+                    self.colorOfPiece = None
+                    return 
+        elif self.select: # When we have the piece in our hand and pressed enter 
+            if cord in self.squares and self.squares[cord] != None and roundTuple(self.squares[cord].getColor()) == (0, 1, 0):
                 if not self.moveCondition(cord):
-                    print(self.pieces)
-                    print(self.pieces[cord])
                     if self.pieces[cord] != None:
-                        self.pieceCord[self.pieces[cord]] = (100, 100, 100)
+                        self.pCord[self.pieces[cord]] = (100, 100, 100)
                         self.pieces[cord].setPos(100, 100, 100)
                     self.pieces[cord] = self.piece # Replacing/ placing the piece
-                    self.pieceCord[self.piece] = cord
+                    self.pCord[self.piece] = cord
                     if cord != self.pieceKey: # If not then the piece will be lost from the dictionary
                         self.pieces[self.pieceKey] = None # Change the previous place to None
+                    self.square.setPos(7, 0, 1.01)
                     self.select = False # Now we donot have the piece
                     self.piece = None # No piece is selected
                     self.pieceKey = None # Then there is no piece key
                     self.reColorSq()
-                    keyMap["enter"] = False # Reset the keymap
-                    self.turn = int(not self.turn)
-                    self.switch()
+                    keyMap["enter"] = False # Reset the keymap  
+                    self.switch() 
+                    
                 else:
                     print("NOOO")
                     self.piece.setPos(self.pieceKey)
@@ -392,30 +412,22 @@ class MilleniumChess(ShowBase):
                 self.pieceKey = None # Then there is no piece key
                 self.reColorSq()
                 keyMap["enter"] = False # Reset the keymap
-            
-            return # unnecessary?
-    
+            return # unnecessary? 
     def switch(self):
-#         print(list(self.pieces.values()))
-#         print(self.squares)
-        for square in list(self.squares.values()):
-#             print(square.getZ())
-            square.setZ(square.getZ() * -1)
-#             print(square.getz())
-            self.sqCord[square] = roundTuple(square.getPos())
-            self.recordColor[self.sqCord[square]] = roundTuple(square.getColor())
-        for piece in list(self.pieces.values()):
-            if piece!= None:
-                piece.setZ(piece.getZ() * -1)
-        for piece in self.pieceCord:
-            self.pieceCord[piece] = roundTuple(piece.getPos())
-            self.pieces[self.pieceCord[piece]] = piece
-#         print(self.squares)
-        
-        
+        self.turn = int(not self.turn)
+        for square in self.sCord:
+            self.squares[self.sCord[square]] = None
+            square.setZ(square.getZ() * -1) 
+            self.sCord[square] = roundTuple(square.getPos())
+            self.squares[self.sCord[square]] = square
+        for piece in self.pCord:
+            self.pieces[self.pCord[piece]] = None
+            piece.setZ(piece.getZ() * -1)
+            self.pCord[piece] = roundTuple(piece.getPos())
+            self.pieces[self.pCord[piece]] = piece 
     def moveCondition(self, cord):
         initialPiece = None
-        potentialEmpSq = self.pieceCord[self.piece]
+        potentialEmpSq = self.pCord[self.piece]
         self.pieces[potentialEmpSq] = None
         if cord in self.pieces:
             initialPiece = self.pieces[cord]
@@ -423,12 +435,11 @@ class MilleniumChess(ShowBase):
         if self.colorOfPiece == (1, 1, 1):
             print("yes")
             tempPiece = self.records["lightKing"]
-            threatenedCord = self.pieceCord[tempPiece]
+            threatenedCord = self.pCord[tempPiece]
             check = self.checkThreat(threatenedCord)
         elif self.colorOfPiece != (1, 1, 1):
             tempPiece = self.records["darkKing"]
-            threatenedCord = self.pieceCord[tempPiece]
-            print(self.checkThreat(threatenedCord))
+            threatenedCord = self.pCord[tempPiece] 
             check = self.checkThreat(threatenedCord)
         self.pieces[potentialEmpSq] = self.piece
         self.pieces[cord] = initialPiece
@@ -436,10 +447,11 @@ class MilleniumChess(ShowBase):
         
     def reColorSq(self):
         for square in self.squares:
-            x = self.recordColor[square][0]
-            y = self.recordColor[square][1]
-            z = self.recordColor[square][2]
-            self.squares[square].setColor(x, y, z)
+            if self.squares[square] != None:
+                x = self.recordColor[square][0]
+                y = self.recordColor[square][1]
+                z = self.recordColor[square][2]
+                self.squares[square].setColor(x, y, z)
     
     def showMoves(self):
         validMoves = None
@@ -467,8 +479,7 @@ class MilleniumChess(ShowBase):
         if currentSq == None:
             currentSq= self.pieceKey
         posOfPawn = currentSq
-        colorOfPawn = roundTuple(self.piece.getColor())
-#         self.squares[roundTuple(posOfKnight)].setColor(0, 1, 0)
+        colorOfPawn = roundTuple(self.piece.getColor()) 
         x = posOfPawn[0]
         y = posOfPawn[1]
         z = posOfPawn[2]
@@ -510,10 +521,8 @@ class MilleniumChess(ShowBase):
 
     def findKingMoves(self, square = None):
         if square == None:
-            square = self.piece.getPos()
-        ## print("king time")
-        posOfKing = roundTuple(square)
-#         self.colorOfPiece
+            square = self.piece.getPos() 
+        posOfKing = roundTuple(square) 
         x = posOfKing[0]
         y = posOfKing[1]
         z = posOfKing[2]
@@ -533,81 +542,53 @@ class MilleniumChess(ShowBase):
         moves += [(x + 1 , y+ 9, z + 1)] + [(x + 1 , y - 9, z-1)]
         moves += [(x - 1 , y+ 9, z + 1)] + [(x - 1 , y - 9, z-1)]
         
-        moves = list(set(self.removeExtra(moves))) # Perfect removal of extras
-        print(len(moves))
-#         self.tempPiece = self.piece
-#         
-        for cord in moves[:]:
-#             # print("enter")
-            if self.checkThreat(cord):
-                # print(cord)
-                moves.remove(cord)
-#             print(le(cord))
-#             self.piece.setPos(self.pieceKey)
+        moves = list(set(self.removeExtra(moves))) # Perfect removal of extras 
+        for cord in moves[:]: 
+            if self.checkThreat(cord): 
+                moves.remove(cord) 
         return moves
     
     def checkThreat(self, square):
         x = square[0]
         y = square[1]
-        z = square[2]
-        
-        #print("start checking rook")
+        z = square[2] 
         findPotentialRookPos = self.findValidRookSq(square)
         for sq in findPotentialRookPos:
-            pos = self.sqCord[sq]
+            pos = self.sCord[sq]
             # print(pos)
             if pos in self.pieces and self.pieces[pos] != None:
                if "rook"  in str(self.pieces[pos]) or "queen" in str(self.pieces[pos]):
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece and pos != square:
-                       return True
-                    
-        #print("start checking bishop")
-#         print(square)
+                       return True  
         findPotentialBishopPos = self.findValidBishopSq(square)
         for sq in findPotentialBishopPos:
-            pos = self.sqCord[sq]
+            pos = self.sCord[sq]
             if pos in self.pieces and self.pieces[pos] != None:
                if "bishop"  in str(self.pieces[pos]) or "queen"  in str(self.pieces[pos]):
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece and pos != square:
-                       return True
-#         # print("start checking queen")
-#         findPotentialQueenPos = findPotentialRookPos + findPotentialBishopPos
-#         for pos in findPotentialQueenPos:
-#            if pos in self.pieces and self.pieces[pos] != None:
-#                if "queen"  in self.pieces[pos]:
-#                    if roundTuple(self.pieces[pos].getColor) != self.colorOfPiece:
-#                        return True
-        #print("start checking knight")
+                       return True 
         findPotentialKnightPos = self.findKnightMoves(square)
         for pos in findPotentialKnightPos:
            if pos in self.pieces and self.pieces[pos] != None:
                if "knight"  in str(self.pieces[pos]) and pos != square:
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece:
-                       return True
-                    
-        #print("start checking pawn")
+                       return True 
         findPotentialPawnPos = self.findPawnMoves(square)
         for pos in findPotentialPawnPos:
            if pos in self.pieces and self.pieces[pos] != None:
                if "pawn"  in str(self.pieces[pos]) :
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece:
-                       return True
-        
-        
-        
-        
-        return False
-#     
+                       return True 
+        return False 
+
     def checkPiece(self, potentialThreats, piece):
         for square in potentialThreats:
             if square in self.pieces and piece in str(self.pieces[square]):
                 if self.colorOfPiece != self.pieces[square].getColor():
                     return True
         else:
-            return False
+            return False 
 
-
-# Removes the tuple cords that are outside the boards and tuple cords where the alies reside
     def removeExtra(self, moves):
         for move in moves[:]:
             if move not in self.squares:
@@ -616,9 +597,8 @@ class MilleniumChess(ShowBase):
                 if roundTuple(self.pieces[move].getColor()) == self.colorOfPiece:
                     if self.piece != self.pieces[move]:
                         moves.remove(move)
-        return moves
-    
-    # Given a list of tuples or list squares(path), this function will turn them green
+        return moves 
+
     def showValidSq(self, validMoves):
         # Valid moves are in a list of tuples
         for move in validMoves:
@@ -637,8 +617,7 @@ class MilleniumChess(ShowBase):
     def findValidBishopSq(self, currentSq = None):# Changes the color of valid squares of bishop into green
         if currentSq == None:
             currentSq = self.pieceKey
-        posOfBishop = currentSq
-#         self.squares[posOfBishop].setColor(0, 1, 0)
+        posOfBishop = currentSq 
         x = posOfBishop[0]
         y = posOfBishop[1]
         z = posOfBishop[2]
@@ -804,14 +783,11 @@ class MilleniumChess(ShowBase):
     def findValidRookSq(self, currentSq = None): # Changes the color of valid squares into green
         if currentSq == None:
             currentSq = self.pieceKey
-        posOfRook = currentSq
-#         self.squares[posOfRook].setColor(0, 1, 0)
+        posOfRook = currentSq 
         x = posOfRook[0]
         y = posOfRook[1]
         z = posOfRook[2]
-        validSq = []
-#         ## print(posOfRook)
-#         ## print(x, y, z)
+        validSq = [] 
         for i in range(9): # going positive x axis
             a = x + i
             potentialSq = (a, y, z)
@@ -992,10 +968,7 @@ class MilleniumChess(ShowBase):
                     break
         return validSq
                 
-
-
-
-
+ 
     def showValidKnightSq(self, validMoves): # Exclusive only to knight as we are hardcoding all possible positions
         for move in validMoves:
             if self.checkFreeSq(move):
@@ -1010,11 +983,9 @@ class MilleniumChess(ShowBase):
             
     def findKnightMoves(self, currentSq= None):
         if currentSq == None:
-            currentSq= self.pieceKey
-#         ## print("knight itme")
+            currentSq= self.pieceKey 
         posOfKnight = currentSq
-        colorOfKnight = self.piece.getColor()
-#         self.squares[roundTuple(posOfKnight)].setColor(0, 1, 0)
+        colorOfKnight = self.piece.getColor() 
         x = posOfKnight[0]
         y = posOfKnight[1]
         z = posOfKnight[2]
@@ -1042,9 +1013,7 @@ class MilleniumChess(ShowBase):
         m22 = (x - 1, y + 16, z + 2)
         m23 = (x + 1, y - 16, z -2 )
         m24 = (x - 1, y  - 16, z - 2)
-        m25 = (x, y, z)
-#         ## print(posOfKnight)
-#         ## print([m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16])
+        m25 = (x, y, z) 
         return [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16,m17,m18,m19,m20,m21,m22,m23,m24,m25]
             
 
@@ -1055,12 +1024,10 @@ class MilleniumChess(ShowBase):
         # Store variables
         self.squares = {}
         self.pieces = {}
-        self.recordColor = {}
-        self.sqCord = {}
-        self.pieceCord = {}
-        # Record the kings by their names
+        self.recordColor = {} 
+        self.pCord = {}
+        self.sCord = {}
         self.records = {}
-        # Just as the name says
         self.formBoardAndPieces()
         
         self.disableMouse() # For camera issues
@@ -1074,12 +1041,8 @@ class MilleniumChess(ShowBase):
         self.square  = loader.loadModel("models/square.egg")
         self.square.reparentTo(render)
         self.square.setPos(1, 8, 0.01)
-        self.square.setColor(0,0,1,1)
-        # Test piece
-#         self.testPieceWhite = loader.loadModel("models/pawn.egg")
-#         self.testPieceWhite.reparentTo(render)
-#         self.testPieceWhite.setPos(0, 0, - 10)
-#         self.testPieceWhite.setColor(1,1,1)
+        self.square.setColor(0,0,1,1) 
+
         # Setupping the lights
         self.setupLights()
         # Accepting the commands
@@ -1098,15 +1061,11 @@ class MilleniumChess(ShowBase):
         self.select = False
         self.turn = 0
         
-        
-#         ## print((self.findCords(self.pieces[(1,13,1)]))) # For testing any info
-        
 
  
 
 game = MilleniumChess()
 game.run()
-
 
 
 

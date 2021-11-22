@@ -73,7 +73,7 @@ class MilleniumChess(ShowBase):
                         self.recordColor[(cord)] = (0,0,0)
                         self.recordColor[(cord[0], cord[1], -1 * cord[2])] = (0,0,0)
                         self.pieces[(cord)] = None
-                        self.sqCord[square] = cord
+                        self.sCord[square] = cord
     #                     count+= 1
                     else:
                         square = loader.loadModel("models/square.egg")
@@ -85,10 +85,10 @@ class MilleniumChess(ShowBase):
                         self.recordColor[(cord)] = (1,1,1)
                         self.recordColor[(cord[0], cord[1], -1 * cord[2])] = (1,1,1)
                         self.pieces[(cord)] = None
-                        self.sqCord[square] = cord
+                        self.sCord[square] = cord
                     if y == 12 and z != 0  and z != -1:
                         piece = loader.loadModel("models/pawn.egg")
-                        self.pieceCord[piece] = cord
+                        self.pCord[piece] = cord
                         self.pieces[(cord)] = piece
                         self.pieces[(cord)].reparentTo(render)
                         self.pieces[(cord)].setPos(x ,y+(8 * z),(z))
@@ -97,7 +97,7 @@ class MilleniumChess(ShowBase):
                         
                     elif y == 7 and z != 0 and z != 1:
                         piece = loader.loadModel("models/pawn.egg")
-                        self.pieceCord[piece] = cord
+                        self.pCord[piece] = cord
                         self.pieces[(cord)] = piece
                         self.pieces[(cord)].reparentTo(render)
                         self.pieces[(cord)].setPos(cord)
@@ -107,7 +107,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(-3, 13), (4,13), (-3,6), (4,6)] and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/rook.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -115,7 +115,7 @@ class MilleniumChess(ShowBase):
 #                             #self.records["lightRook"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/rook.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -124,7 +124,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(-2, 13), (3,13), (-2,6), (3,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/knight.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -132,7 +132,7 @@ class MilleniumChess(ShowBase):
                             #self.records["lightKnight"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/knight.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -141,7 +141,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(-1, 13), (2,13), (-1,6), (2,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/bishop.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -149,7 +149,7 @@ class MilleniumChess(ShowBase):
                             #self.records["lightBishop"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/bishop.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -158,7 +158,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(0, 13), (0,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/king.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -166,7 +166,7 @@ class MilleniumChess(ShowBase):
                             self.records["lightKing"] = piece
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/king.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -175,7 +175,7 @@ class MilleniumChess(ShowBase):
                     elif (x, y) in [(1, 13), (1,6)]and z != 0:
                         if y == 13 and z != -1:
                             piece = loader.loadModel("models/queen.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -183,7 +183,7 @@ class MilleniumChess(ShowBase):
                             #self.records["lightQueen"] = self.pieces[(cord)]
                         elif y == 6 and z != 1:
                             piece = loader.loadModel("models/queen.egg")
-                            self.pieceCord[piece] = cord
+                            self.pCord[piece] = cord
                             self.pieces[(cord)] = piece
                             self.pieces[(cord)].reparentTo(render)
                             self.pieces[(cord)].setPos(cord)
@@ -360,10 +360,10 @@ class MilleniumChess(ShowBase):
             if roundTuple(self.squares[cord].getColor()) == (0, 1, 0):
                 if not self.moveCondition(cord):
                     if self.pieces[cord] != None:
-                        self.pieceCord[self.pieces[cord]] = (100, 100, 100)
+                        self.pCord[self.pieces[cord]] = (100, 100, 100)
                         self.pieces[cord].setPos(100, 100, 100)
                     self.pieces[cord] = self.piece # Replacing/ placing the piece
-                    self.pieceCord[self.piece] = cord
+                    self.pCord[self.piece] = cord
                     if cord != self.pieceKey: # If not then the piece will be lost from the dictionary
                         self.pieces[self.pieceKey] = None # Change the previous place to None
                     self.select = False # Now we donot have the piece
@@ -392,27 +392,36 @@ class MilleniumChess(ShowBase):
             
             return # unnecessary?
     
+#     def switch(self):
+# #         print(list(self.pieces.values()))
+# #         print(self.squares)
+#         for square in list(self.squares.values()):
+# #             print(square.getZ())
+#             square.setZ(square.getZ() * -1)
+# #             print(square.getz())
+#             self.sCord[square] = roundTuple(square.getPos())
+#             self.recordColor[self.sCord[square]] = roundTuple(square.getColor())
+#         for piece in list(self.pieces.values()):
+#             if piece!= None:
+#                 piece.setZ(piece.getZ() * -1)
+#         for piece in self.pCord:
+#             self.pCord[piece] = roundTuple(piece.getPos())
+#             self.pieces[self.pCord[piece]] = piece
+#         print(self.squares)
     def switch(self):
-#         print(list(self.pieces.values()))
-#         print(self.squares)
-        for square in list(self.squares.values()):
-#             print(square.getZ())
+        self.turn = int(not self.turn)
+        for square in self.sCord:
             square.setZ(square.getZ() * -1)
-#             print(square.getz())
-            self.sqCord[square] = roundTuple(square.getPos())
-            self.recordColor[self.sqCord[square]] = roundTuple(square.getColor())
-        for piece in list(self.pieces.values()):
-            if piece!= None:
-                piece.setZ(piece.getZ() * -1)
-        for piece in self.pieceCord:
-            self.pieceCord[piece] = roundTuple(piece.getPos())
-            self.pieces[self.pieceCord[piece]] = piece
-#         print(self.squares)
+            self.inverseP[roundTuple(square.getPos())] = None
+        for piece in self.pCord:
+            piece.setZ(piece.getZ() * -1)
+            self.pCord[piece] = roundTuple(piece.getPos())
+            self.inverseP[roundTuple(piece.getPos())] = piece
         
         
     def moveCondition(self, cord):
         initialPiece = None
-        potentialEmpSq = self.pieceCord[self.piece]
+        potentialEmpSq = self.pCord[self.piece]
         self.pieces[potentialEmpSq] = None
         if cord in self.pieces:
             initialPiece = self.pieces[cord]
@@ -420,11 +429,11 @@ class MilleniumChess(ShowBase):
         if self.colorOfPiece == (1, 1, 1):
             print("yes")
             tempPiece = self.records["lightKing"]
-            threatenedCord = self.pieceCord[tempPiece]
+            threatenedCord = self.pCord[tempPiece]
             check = self.checkThreat(threatenedCord)
         elif self.colorOfPiece != (1, 1, 1):
             tempPiece = self.records["darkKing"]
-            threatenedCord = self.pieceCord[tempPiece]
+            threatenedCord = self.pCord[tempPiece]
             print(self.checkThreat(threatenedCord))
             check = self.checkThreat(threatenedCord)
         self.pieces[potentialEmpSq] = self.piece
@@ -530,17 +539,10 @@ class MilleniumChess(ShowBase):
         moves += [(x + 1 , y+ 9, z + 1)] + [(x + 1 , y - 9, z-1)]
         moves += [(x - 1 , y+ 9, z + 1)] + [(x - 1 , y - 9, z-1)]
         
-        moves = list(set(self.removeExtra(moves))) # Perfect removal of extras
-        print(len(moves))
-#         self.tempPiece = self.piece
-#         
-        for cord in moves[:]:
-#             # print("enter")
-            if self.checkThreat(cord):
-                # print(cord)
-                moves.remove(cord)
-#             print(le(cord))
-#             self.piece.setPos(self.pieceKey)
+        moves = list(set(self.removeExtra(moves))) # Perfect removal of extras 
+        for cord in moves[:]: 
+            if self.checkThreat(cord): 
+                moves.remove(cord) 
         return moves
     
     def checkThreat(self, square):
@@ -551,7 +553,7 @@ class MilleniumChess(ShowBase):
         #print("start checking rook")
         findPotentialRookPos = self.findValidRookSq(square)
         for sq in findPotentialRookPos:
-            pos = self.sqCord[sq]
+            pos = self.sCord[sq]
             # print(pos)
             if pos in self.pieces and self.pieces[pos] != None:
                if "rook"  in str(self.pieces[pos]) or "queen" in str(self.pieces[pos]):
@@ -562,19 +564,11 @@ class MilleniumChess(ShowBase):
 #         print(square)
         findPotentialBishopPos = self.findValidBishopSq(square)
         for sq in findPotentialBishopPos:
-            pos = self.sqCord[sq]
+            pos = self.sCord[sq]
             if pos in self.pieces and self.pieces[pos] != None:
                if "bishop"  in str(self.pieces[pos]) or "queen"  in str(self.pieces[pos]):
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece and pos != square:
-                       return True
-#         # print("start checking queen")
-#         findPotentialQueenPos = findPotentialRookPos + findPotentialBishopPos
-#         for pos in findPotentialQueenPos:
-#            if pos in self.pieces and self.pieces[pos] != None:
-#                if "queen"  in self.pieces[pos]:
-#                    if roundTuple(self.pieces[pos].getColor) != self.colorOfPiece:
-#                        return True
-        #print("start checking knight")
+                       return True 
         findPotentialKnightPos = self.findKnightMoves(square)
         for pos in findPotentialKnightPos:
            if pos in self.pieces and self.pieces[pos] != None:
@@ -1053,8 +1047,10 @@ class MilleniumChess(ShowBase):
         self.squares = {}
         self.pieces = {}
         self.recordColor = {}
-        self.sqCord = {}
-        self.pieceCord = {}
+        self.sCord = {}
+        self.pCord = {}
+        self.inverseP = {}
+        self.inverseS = {}
         # Record the kings by their names
         self.records = {}
         # Just as the name says
