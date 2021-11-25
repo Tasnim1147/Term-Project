@@ -224,11 +224,12 @@ class MilleniumChess(ShowBase):
     # CALLED every frame
     # Changes the position based on blue sq
     def update(self, task): 
+        print(self.square.getPos())
         if self.turn == 0:
             self.camera.setPos(0.5,-20,25)
             self.camera.setHpr(0,-42.5,0)
             self.dx = 1
-            self.switch()
+
         else: 
             self.camera.setPos(0.5,39,25)
             self.camera.setHpr(180,-42.5 ,0)
@@ -348,8 +349,10 @@ class MilleniumChess(ShowBase):
             keyMap["d"] = False 
         if keyMap["enter"]:  
             self.enterPressed(posOfSq)
+            posOfSq = self.square.getPos()
         elif keyMap["enter"] == False and self.select:
             self.pieces[self.pieceKey].setPos(roundTuple(posOfSq)) 
+        print("setPos ", posOfSq)
         self.square.setPos(posOfSq) 
         return task.cont
     
@@ -388,13 +391,15 @@ class MilleniumChess(ShowBase):
                     self.pCord[self.piece] = cord
                     if cord != self.pieceKey: # If not then the piece will be lost from the dictionary
                         self.pieces[self.pieceKey] = None # Change the previous place to None
-                    self.square.setPos(7, 0, 1.01)
+                    self.square.setPos(1, 8, 0.01)
+                    print(self.square.getPos())
+                   # assert(False)
                     self.select = False # Now we donot have the piece
                     self.piece = None # No piece is selected
                     self.pieceKey = None # Then there is no piece key
                     self.reColorSq()
                     keyMap["enter"] = False # Reset the keymap  
-                    #self.switch() 
+                    self.switch() 
                     
                 else:
                     print("NOOO")

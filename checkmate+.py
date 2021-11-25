@@ -1,3 +1,4 @@
+### Variation of 8
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import CollisionTraverser, CollisionNode
 from panda3d.core import CollisionHandlerQueue, CollisionRay
@@ -7,6 +8,11 @@ from direct.gui.OnscreenText import OnscreenText
 from direct.showbase.DirectObject import DirectObject
 from direct.task.Task import Task 
 
+
+def PointAtZ(z, point, vec):
+    # Not mine
+
+    return point + vec * ((z - point.getZ()) / vec.getZ())
 
 # Takes any tuple of 3 numbers and returns a tuple of the round of each number
 def roundTuple(t): 
@@ -25,11 +31,15 @@ keyMap = {
          "u": False,
           "d": False,
         "enter":False,
-        "space":False}
+        "space":False,
+        "m": False} # m is for mouse false for not using mouse and true for using mouse
 
 # Changes the above mapping of the keys
 def updateKeyMap(key):
-    keyMap[key] = True
+    if not keyMap["m"]:
+        keyMap[key] = not keyMap[key]
+    elif key == "m":
+        keyMap[key] = not keyMap[key]
     
 # Checks whether to tupples are equal 
 def checkEqTuples(p1,p2):
@@ -215,6 +225,188 @@ class MilleniumChess(ShowBase):
             self.camera.setPos(0.5,39,25)
             self.camera.setHpr(180,-42.5 ,0)
             self.dx = -1
+        if keyMap["m"]:
+            self.keyboard = 0
+        elif keyMap["m"] == False:
+            self.keyboard = 1
+        if self.keyboard:
+            self.updateKeyBoard(task)
+        else:
+            self.updateMouse(task)
+        if self.state == 0:
+            return task.done
+        return task.cont
+
+    def updateMouse(self, task): 
+        if self.state == 0:
+            return task.done
+        if self.mouseWatcherNode.hasMouse():
+            # Get the mouse position
+            mpos = self.mouseWatcherNode.getMouse()
+            # Set the position of the ray based on the mouse position
+            self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+            
+            pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+            # Same thing with the direction of the ray
+            vectorOfRay = render.getRelativeVector(
+                camera, self.pickerRay.getDirection())
+            self.changeCurrent_Z()
+            point = PointAtZ(self.current_z, pointOfRay, vectorOfRay) 
+            point = roundTuple(point)
+            if point in self.squares:
+                self.square.setPos(point[0], point[1], point[2] + 0.01)
+                if self.piece != None:
+                    self.piece.setPos(point)
+        if self.state == 0:
+            return task.done
+
+        return task.cont
+
+    def changeCurrent_Z(self):
+        if self.mouseWatcherNode.hasMouse():
+            # get the mouse position
+            mpos = self.mouseWatcherNode.getMouse()
+
+            # Set the position of the ray based on the mouse position
+            self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+            
+            pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+            # Same thing with the direction of the ray
+            vectorOfRay = render.getRelativeVector(
+                camera, self.pickerRay.getDirection())
+            point = PointAtZ(0, pointOfRay, vectorOfRay)
+            pointY = roundTuple(point)[1]
+            if self.turn == 0:
+                if -3 <= pointY <= 5.25:
+                    self.current_z = - 0.99
+                elif 5.25 < pointY <= 14.25:
+                    self.current_z = 0.01
+                elif 15 <= pointY <= 23.25:
+                    self.current_z = 1.01
+            elif self.turn == 1:
+                if -3 <= pointY <= 5.25:
+                    self.current_z = 1.01
+                elif 5.25 < pointY <= 14.25:
+                    self.current_z = 0.01
+                elif 15 <= pointY <= 23.25:
+                    self.current_z = -0.99
+                    pass
+
+
+    def mousePressedLeft(self): 
+        if keyMap["m"] and self.state:
+            if self.select == False:
+                if self.mouseWatcherNode.hasMouse():
+                    # get the mouse position
+                    mpos = self.mouseWatcherNode.getMouse()
+
+                    # Set the position of the ray based on the mouse position
+                    self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+                    
+                    pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+                    # Same thing with the direction of the ray
+                    vectorOfRay = render.getRelativeVector(
+                        camera, self.pickerRay.getDirection())
+                    point = PointAtZ(self.current_z, pointOfRay, vectorOfRay)
+                    point = roundTuple(point) 
+                    # Check whther the non blue sq is empty or not
+                    if self.checkFreeSq(point):
+                        return
+                    elif self.checkFreeSq(point) == False: # If the square contains something
+                        self.piece = self.pieces[point] # It would same point as the posofsq
+                        print(self.piece)
+                        self.colorOfPiece = roundTuple(self.piece.getColor())
+                        if self.turn == 1 and self.colorOfPiece == (1, 1, 1):
+                            self.select = True # Seleect thaat piece
+                            self.pieceKey = point # The key needs to be stored for future ref
+                            self.showMoves() # potential check point for pinned
+                        elif self.turn == 0 and self.colorOfPiece != (1, 1, 1):
+                            self.select = True # Seleect thaat piece
+                            self.pieceKey = point # The key needs to be stored for future ref
+                            self.showMoves() # potential check point for pinned
+                        else:
+                            self.piece = None
+                            self.colorOfPiece = None
+
+                        
+            elif self.select :
+                if self.mouseWatcherNode.hasMouse():
+                    # get the mouse position
+                    mpos = self.mouseWatcherNode.getMouse()
+
+                    # Set the position of the ray based on the mouse position
+                    self.pickerRay.setFromLens(self.camNode, mpos.getX(), mpos.getY())
+                    
+                    pointOfRay = render.getRelativePoint(camera, self.pickerRay.getOrigin())
+                    # Same thing with the direction of the ray
+                    vectorOfRay = render.getRelativeVector(
+                        camera, self.pickerRay.getDirection())
+                    point = roundTuple(PointAtZ(self.current_z, pointOfRay, vectorOfRay))
+                if point in self.squares and self.squares[point] != None and roundTuple(self.squares[point].getColor()) == (0, 1, 0):
+                    if point == self.pieceKey:
+                        self.piece.setPos(self.pieceKey)
+                        self.select = False # Now we donot have the piece
+                        self.piece = None # No piece is selected
+                        self.pieceKey = None # Then there is no piece key
+                        self.reColorSq()
+                    elif not self.moveCondition(point):
+                        if self.pieces[point] != None:
+                            self.pCord[self.pieces[point]] = (100, 100, 100)
+                            self.pieces[point].setPos(100, 100, 100)
+                        self.pieces[point] = self.piece # Replacing/ placing the piece
+                        self.pCord[self.piece] = point
+                        if point != self.pieceKey:
+                        # If pointnot then the piece will be lost from the dictionary
+                            self.pieces[self.pieceKey] = None
+                            # Change the previous place to None 
+                        self.select = False # Now we donot have the piece 
+                        self.piece = None # No piece is selected
+                        self.pieceKey = None # Then there is no piece key
+                        self.reColorSq() 
+                        self.checkCheckMate()
+                        self.square.setPos(1, 8, 0.01)
+                        self.switch() 
+                    elif "king" in str(self.piece):
+                        if self.pieces[point] != None and  self.checkThreat(point):
+                            self.pCord[self.pieces[point]] = (100, 100, 100)
+                            self.pieces[point].setPos(100, 100, 100)
+                        self.pieces[point] = self.piece # Replacing/ placing the piece
+                        self.pCord[self.piece] = point
+                        if point != self.pieceKey:
+                        # If not then the piece will be lost from the dictionary
+                            self.pieces[self.pieceKey] = None
+                        # Change the previous place to None 
+                        self.select = False # Now we donot have the piece
+                        self.piece = None # No piece is selected
+                        self.pieceKey = None # Then there is no piece key
+                        self.reColorSq() 
+                        self.switch() 
+                        
+                    else: 
+                        self.piece.setPos(self.pieceKey)
+                        self.select = False # Now we donot have the piece
+                        self.piece = None # No piece is selected
+                        self.pieceKey = None # Then there is no piece key
+                        self.reColorSq()
+                        return
+                else:
+                    self.piece.setPos(self.pieceKey)
+                    self.select = False # Now we donot have the piece
+                    self.piece = None # No piece is selected
+                    self.pieceKey = None # Then there is no piece key
+                    self.reColorSq()
+
+    def updateKeyBoard(self, task): 
+        if self.state == 0:
+            return task.done
+        if self.turn == 0:
+            self.camera.setPos(0.5,-20,12)
+            self.camera.setHpr(0,-22.5,0)
+            self.dx = 1
+        else: 
+            self.camera.setPos(0.5,39,25)
+            self.camera.setHpr(180,-42.5 ,0)
+            self.dx = -1
         posOfSq = self.square.getPos() # The blue square position
         # Now start checking which button is pressed and change position accordingly 
         if keyMap["left"]:
@@ -328,13 +520,17 @@ class MilleniumChess(ShowBase):
                     posOfSq.y -= 16
                     posOfSq.z = 1.01
             keyMap["d"] = False 
+
         if keyMap["enter"]:  
             self.enterPressed(posOfSq)
             posOfSq = self.square.getPos()
         elif keyMap["enter"] == False and self.select:
             self.pieces[self.pieceKey].setPos(roundTuple(posOfSq)) 
         self.square.setPos(posOfSq) 
-        return task.cont
+        if self.state:
+            return task.cont
+        else:
+            return task.done
     
     def enterPressed(self, posOfSq):
         cord = roundTuple(posOfSq) 
@@ -385,6 +581,7 @@ class MilleniumChess(ShowBase):
                     self.pieceKey = None # Then there is no piece key
                     self.reColorSq()
                     keyMap["enter"] = False # Reset the keymap  
+                    self.checkCheckMate()
                     self.square.setPos(1, 8, 0.01)
                     self.switch() 
                 elif "king" in str(self.piece):
@@ -421,6 +618,7 @@ class MilleniumChess(ShowBase):
                 keyMap["enter"] = False # Reset the keymap
             return
     # Changes the top most board to lowest and vice versa
+    
     def switch(self):
         self.turn = int(not self.turn)
         for square in self.sCord:
@@ -434,6 +632,7 @@ class MilleniumChess(ShowBase):
             self.pCord[piece] = roundTuple(piece.getPos())
             self.pieces[self.pCord[piece]] = piece
         # Conditions to move a piece
+    
     def moveCondition(self, cord):
         initialPiece = None
         potentialEmpSq = self.pCord[self.piece]
@@ -453,6 +652,7 @@ class MilleniumChess(ShowBase):
         self.pieces[cord] = initialPiece
         return check
         # Removing the green color
+    
     def reColorSq(self):
         for square in self.squares:
             if self.squares[square] != None:
@@ -461,6 +661,7 @@ class MilleniumChess(ShowBase):
                 z = self.recordColor[square][2]
                 self.squares[square].setColor(x, y, z)
     # Showing the valid moves by green square
+    
     def showMoves(self):
         validMoves = None
         nameOfPiece = str(self.piece).split("/")[1][0:-4] 
@@ -480,19 +681,32 @@ class MilleniumChess(ShowBase):
             self.showValidSq(validMoves)
         elif nameOfPiece == "pawn":
             validMoves = self.findPawnMoves()
-            self.showValidSq(validMoves) 
-            
+            self.showValidPawnSq(validMoves) 
+
+    def showValidPawnSq(self, validMoves):
+        normalMoves = validMoves[0]
+        attackingMoves = validMoves[1]
+        for move in normalMoves:
+            if move in self.pieces and self.pieces[move] == None:
+                if move in self.squares and self.squares[move] != None:
+                    self.squares[move].setColor(0, 1, 0)
+        for move in attackingMoves:
+            if move in self.squares and self.squares[move] != None:
+                if self.pieces[move] != None:
+                    if roundTuple(self.pieces[move].getColor()) != self.colorOfPiece: 
+                        self.squares[move].setColor(0, 1, 0)
+                
+
     def findPawnMoves(self, currentSq = None):
         if currentSq == None:
             currentSq= self.pieceKey
-        posOfPawn = currentSq
-        colorOfPawn = roundTuple(self.piece.getColor()) 
+        posOfPawn = currentSq  
         x = posOfPawn[0]
         y = posOfPawn[1]
         z = posOfPawn[2] 
         attackingMoves = [] 
         moves = [(x, y, z)]
-        if colorOfPawn != (1, 1, 1) : # Brown pawn
+        if self.turn == 0 : # Brown pawn
             moves += [(x, y + 1, z)]
             moves += [(x, y + 8, z + 1)] + [(x, y + 9, z + 1)]
             moves += [(x, y - 8, z - 1)] + [(x, y - 7, z - 1)]
@@ -503,14 +717,14 @@ class MilleniumChess(ShowBase):
                 moves += [(x, y + 2, z)]
                 moves += [(x, y + 18, z+2)]
                 moves += [(x, y + 16, z + 2 )]
-        elif colorOfPawn == (1, 1, 1) :
+        elif self.turn == 1 :
             moves += [(x, y - 1, z)]
             moves += [(x, y - 8, z + 1)] + [(x, y - 9, z + 1)]
             moves += [(x, y + 8, z - 1)] + [(x, y + 7, z - 1)]
             moves += [(x, y + 8, z + 1)] + [(x, y + 7, z + 1)]
             attackingMoves += [(x + 1, y - 1, z)] + [(x - 1, y - 1, z)]
-            attackingMoves += [(x + 1, y + 9, z + 1)] + [(x - 1, y + 9, z + 1)]
-            attackingMoves += [(x + 1, y - 9, z - 1)] + [(x - 1, y + 9, z - 1)]
+            attackingMoves += [(x + 1, y - 9, z + 1)] + [(x - 1, y - 9, z + 1)]
+            attackingMoves += [(x + 1, y + 9, z - 1)] + [(x - 1, y + 9, z - 1)]
             if y == 20:
                 moves += [(x, y - 2, z)]
                 moves += [(x, y - 18, z + 2)]
@@ -522,9 +736,9 @@ class MilleniumChess(ShowBase):
             if move in self.pieces and self.pieces[move] != None :
                 moves += [move]
         moves = list(set(self.removeExtra(moves)))
-        return moves
+        return moves, attackingMoves
 
-    def findKingMoves(self, square = None):
+    def findKingMoves(self, square = None, threat = True, findType = 1):
         if square == None:
             square = self.piece.getPos() 
         posOfKing = roundTuple(square) 
@@ -560,12 +774,28 @@ class MilleniumChess(ShowBase):
             moves += [(x - 1 , y - 9, z + 1)] + [(x - 1 , y + 9, z-1)]
         
         moves = list(set(self.removeExtra(moves))) #   removal of extras squares
-        for cord in moves[:]: 
-            if self.checkThreat(cord): 
-                moves.remove(cord) 
+        if threat and findType: # Findtype as when bishop ,k1 and k2 combination
+            for cord in moves[:]: 
+                if self.checkThreat(cord): 
+                    moves.remove(cord) 
+        if findType:
+            kingThreats = self.checkNearbyKing()
+            for risk in kingThreats:
+                if risk in moves[:]:
+                    moves.remove(risk)
         return moves
-    
+    # Returns all the possible moves of the oppnet kn=ing without the thrteats
+
+    def checkNearbyKing(self):
+        if self.turn % 2 == 1:
+            moves = self.findKingMoves(self.records["darkKing"].getPos(), False, 0) # Finds all possible moves by the opponent king without considering the threats
+            return moves
+        elif self.turn % 2 == 0:
+            moves = self.findKingMoves(self.records["lightKing"].getPos(), False, 0)
+            return moves 
+
     def checkThreat(self, square):
+        self.pieces[self.pieceKey] = None
         x = square[0]
         y = square[1]
         z = square[2] 
@@ -589,13 +819,15 @@ class MilleniumChess(ShowBase):
                if "knight"  in str(self.pieces[pos]) and pos != square:
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece:
                        return True 
-        findPotentialPawnPos = self.findPawnMoves(square)
+        findPotentialPawnPos = self.findPawnMoves(square)[1]
         for pos in findPotentialPawnPos:
            if pos in self.pieces and self.pieces[pos] != None:
                if "pawn"  in str(self.pieces[pos]) :
                    if roundTuple(self.pieces[pos].getColor()) != self.colorOfPiece:
                        return True 
-        return False 
+
+        self.pieces[self.pieceKey] = self.piece
+        return False  
 
     def checkPiece(self, potentialThreats, piece):
         for square in potentialThreats:
@@ -603,8 +835,8 @@ class MilleniumChess(ShowBase):
                 if self.colorOfPiece != self.pieces[square].getColor():
                     return True
         else:
-            return False 
-
+            return False  
+    
     def removeExtra(self, moves):
         for move in moves[:]:
             if move not in self.squares:
@@ -613,8 +845,8 @@ class MilleniumChess(ShowBase):
                 if roundTuple(self.pieces[move].getColor()) == self.colorOfPiece:
                     if self.piece != self.pieces[move]:
                         moves.remove(move)
-        return moves 
-
+        return moves  
+    
     def showValidSq(self, validMoves):
         # Valid moves are in a list of tuples
         for move in validMoves:
@@ -622,15 +854,14 @@ class MilleniumChess(ShowBase):
                 move.setColor(0, 1, 0)
             elif isinstance(move, type((1,2))):
                 if self.squares[move] != None:
-                    self.squares[move].setColor(0, 1, 0)
-            
+                    self.squares[move].setColor(0, 1, 0) 
+    
     def showValidQueenSq(self):
         validMoves = []
         validMoves += self.findValidRookSq()
         validMoves += self.findValidBishopSq()
-        self.showValidSq(validMoves)
-        
-            
+        self.showValidSq(validMoves) 
+    
     def findValidBishopSq(self, currentSq = None):
         # Changes the color of valid squares of bishop into green
         if currentSq == None:
@@ -902,9 +1133,8 @@ class MilleniumChess(ShowBase):
                         break
                     else:
                         break
-        return validSq
-            
-            
+        return validSq   
+    
     def findValidRookSq(self, currentSq = None):
         # Changes the color of valid squares into green
         if currentSq == None:
@@ -1225,17 +1455,19 @@ class MilleniumChess(ShowBase):
                     else:
                         break
         return validSq
+    
     def showValidKnightSq(self, validMoves):
         # Exclusive only to knight as we are hardcoding all possible positions
         for move in validMoves:
             if self.checkFreeSq(move):
-                if move in self.squares:
+                if move in self.squares and self.squares[move] != None:
                     self.squares[move].setColor(0, 1, 0)
             elif not self.checkFreeSq(move):
                 if roundTuple(self.pieces[move].getColor()) != self.colorOfPiece:
                     self.squares[move].setColor(0, 1, 0)
                 elif self.piece == self.pieces[move]:
                     self.squares[move].setColor(0, 1, 0) 
+    
     def findKnightMoves(self, currentSq = None):
         if currentSq == None:
             currentSq= self.pieceKey 
@@ -1259,9 +1491,17 @@ class MilleniumChess(ShowBase):
                 (x - 1, y - 16, z + 2),(x + 1, y + 16, z -2 ), (x - 1, y + 16, z - 2), (x + 2, y - 8 , z + 1),
                 (x - 2, y - 8 , z + 1), (x + 2, y + 8, z - 1), (x - 2, y + 8, z - 1)]
             
-        return moves
-            
-
+        return moves 
+    
+    def checkCheckMate(self):
+        if self.colorOfPiece == (1, 1, 1):
+            possibleMovesOfOpponentKing = roundTuple(self.records["darkKing"].getPos())
+            if len(possibleMovesOfOpponentKing) == 0:
+                self.state = 0
+        else:
+            possibleMovesOfOpponentKing = roundTuple(self.records["lightKing"].getPos())
+            if len(possibleMovesOfOpponentKing) == 0:
+                self.state = 0  
     
     def __init__(self):
         # Inheriting all attributes
@@ -1297,7 +1537,9 @@ class MilleniumChess(ShowBase):
         self.accept("arrow_down", updateKeyMap, ["down"])
         self.accept("u", updateKeyMap, ["u"])
         self.accept("d", updateKeyMap, ["d"] )
+        self.accept("m", updateKeyMap, ["m"])
         self.accept("enter", updateKeyMap, ["enter"])
+        self.accept("mouse1", self.mousePressedLeft)
         # Updating the required updates
         self.taskMgr.add(self.update, "update")
         # Change in unit
@@ -1307,12 +1549,17 @@ class MilleniumChess(ShowBase):
         self.turn = 0
         self.piece = None
         self.colorOfPiece = None
-        
+        self.state = 1
+        self.keyboard = 1
+        # Mouse stufs
+        self.current_z = 0.01
+        self.pickerRay = CollisionRay()
 
- 
+    # Build another clas s for the front and the basck page
 
 game = MilleniumChess()
 game.run()
+
 
 
 

@@ -334,7 +334,11 @@ class MilleniumChess(ShowBase):
         elif keyMap["enter"] == False and self.select:
             self.pieces[self.pieceKey].setPos(roundTuple(posOfSq)) 
         self.square.setPos(posOfSq) 
-        return task.cont
+        if self.state:
+            return task.cont
+        else:
+            print("CHECKMATE")
+            return task.done
     
     def enterPressed(self, posOfSq):
         cord = roundTuple(posOfSq) 
@@ -385,6 +389,7 @@ class MilleniumChess(ShowBase):
                     self.pieceKey = None # Then there is no piece key
                     self.reColorSq()
                     keyMap["enter"] = False # Reset the keymap  
+                    self.checkCheckMate()
                     self.square.setPos(1, 8, 0.01)
                     self.switch() 
                 elif "king" in str(self.piece):
@@ -485,14 +490,13 @@ class MilleniumChess(ShowBase):
     def findPawnMoves(self, currentSq = None):
         if currentSq == None:
             currentSq= self.pieceKey
-        posOfPawn = currentSq
-        colorOfPawn = roundTuple(self.piece.getColor()) 
+        posOfPawn = currentSq  
         x = posOfPawn[0]
         y = posOfPawn[1]
         z = posOfPawn[2] 
         attackingMoves = [] 
         moves = [(x, y, z)]
-        if colorOfPawn != (1, 1, 1) : # Brown pawn
+        if self.turn == 0 : # Brown pawn
             moves += [(x, y + 1, z)]
             moves += [(x, y + 8, z + 1)] + [(x, y + 9, z + 1)]
             moves += [(x, y - 8, z - 1)] + [(x, y - 7, z - 1)]
@@ -503,7 +507,7 @@ class MilleniumChess(ShowBase):
                 moves += [(x, y + 2, z)]
                 moves += [(x, y + 18, z+2)]
                 moves += [(x, y + 16, z + 2 )]
-        elif colorOfPawn == (1, 1, 1) :
+        elif self.turn == 1 :
             moves += [(x, y - 1, z)]
             moves += [(x, y - 8, z + 1)] + [(x, y - 9, z + 1)]
             moves += [(x, y + 8, z - 1)] + [(x, y + 7, z - 1)]
@@ -1260,6 +1264,16 @@ class MilleniumChess(ShowBase):
                 (x - 2, y - 8 , z + 1), (x + 2, y + 8, z - 1), (x - 2, y + 8, z - 1)]
             
         return moves
+
+    def checkCheckMate(self):
+        if self.colorOfPiece == (1, 1, 1):
+            possibleMovesOfOpponentKing = roundTuple(self.records["darkKing"].getPos())
+            if len(possibleMovesOfOpponentKing) == 0:
+                self.state = 0
+        else:
+            possibleMovesOfOpponentKing = roundTuple(self.records["lightKing"].getPos())
+            if len(possibleMovesOfOpponentKing) == 0:
+                self.state = 0 
             
 
     
@@ -1307,6 +1321,7 @@ class MilleniumChess(ShowBase):
         self.turn = 0
         self.piece = None
         self.colorOfPiece = None
+        self.state = 1
         
 
  
